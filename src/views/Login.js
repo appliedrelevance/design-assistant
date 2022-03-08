@@ -34,6 +34,7 @@ export default function Login() {
       redirect = 'http://localhost:3000';
       appName = 'localhost';
     }
+    console.log('redirect', redirect);
     let codeVerifier = genRandomCode();
     localStorage.setItem('codeVerifier', codeVerifier);
     let codeChallenge = await sha256(codeVerifier);

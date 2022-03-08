@@ -3,10 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config();
+const cors = require('cors')
 
 
 const app = express();
-const port = process.env.PORT || 5000;
+const API_PORT = process.env.API_PORT || 5050;
+const MONGODB = process.env.MONGODB_URL
 
 // Force HTTPS
 app.use((req, res, next) => {
@@ -44,6 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 
+
 // CORS
 app.use((req, res, next) => {
   let fetchOrigin = req.headers.origin;
@@ -57,15 +60,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cors());
+
 app.use('/', express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
 app.use('/api/questions', require('./api/routes/questions'));
-app.use('/api/responses', require('./api/routes/responses'));
-app.use('/api/trustedAIProviders', require('./api/routes/trustedAIProviders'));
-app.use('/api/trustedAIResources', require('./api/routes/trustedAIResources'));
-app.use('/api/users', require('./api/routes/users'));
-app.use('/api/submissions', require('./api/routes/submissions'));
 app.use('/api/metadata', require('./api/routes/metadata'));
 app.use('/api/dimensions', require('./api/routes/dimensions'));
 app.use('/api/analytics', require('./api/routes/analytics'));
@@ -76,10 +76,10 @@ let runServer = () => {
     .on('error', console.warn)
     .on('disconnected', console.warn)
     .once('open', () => {
-      console.log(`Serving http://:${port}`);
-      app.listen(port);
+      console.log(`Serving http://localhost:${API_PORT}`);
+      app.listen(API_PORT);
     });
-  return mongoose.connect(process.env.MONGODB_URL, {
+  return mongoose.connect(MONGODB, {
     keepAlive: 1,
     useNewUrlParser: true,
     useCreateIndex: true,

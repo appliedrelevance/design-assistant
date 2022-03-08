@@ -7,7 +7,7 @@ const auth = require('../middleware/auth');
 const mailService = require('../middleware/mailService');
 
 const jwtSecret = process.env.SECRET || 'devsecret';
-const sessionTimeout = process.env.SESSION_TIMEOUT;
+const sessionTimeout = process.env.SESSION_TIMEOUT || '30d';
 
 let createUser = async ({ username, email, organization, role }) => {
   let user = new User({ email, username, organization, role });

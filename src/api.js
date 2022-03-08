@@ -1,4 +1,5 @@
 import axios from 'axios';
+require('dotenv').config();
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || window.location.origin;
 
