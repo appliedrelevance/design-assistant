@@ -5,64 +5,8 @@ import { Table } from 'react-bootstrap';
 import { DimensionHead } from './DimensionHead'
 import { ScoreBar } from '../Components/ScoreBar';
 import TextField from '@material-ui/core/TextField';
+import { CertificationPdf } from './CertificationPdf'
 
-const displayQuestion = (result, question) => {
-  var choices;
-  if (Array.isArray(result)) {
-    choices = question?.choices?.filter((choice) =>
-      result?.includes(choice?.value)
-    );
-  } else {
-    choices = question?.choices?.filter((choice) => result === choice?.value);
-  }
-  console.log('question', question)
-  console.log('result', result)
-  console.log('choices', choices)
-
-  return (
-    <tr key={question?.name}>
-      <td>
-        {question?.title?.default.split('\n').map(function (item, idx) {
-          return (
-            <span key={idx}>
-              {item}
-              <br />
-            </span>
-          );
-        })}
-      </td>
-      <td>
-        {question?.recommendation?.default
-          .split('\n')
-          .map((item, idx) => {
-            return (
-              <span key={idx}>
-                {item}
-                <br />
-              </span>
-            );
-          })}
-      </td>
-      <td>
-        {question?.recommendedlinks?.default.map(function (
-          recommendedlink,
-          idx
-        ) {
-          let url = recommendedlink;
-          if (!/^(?:f|ht)tps?:\/\//.test(url)) {
-            url = 'http://' + url;
-          }
-          return (
-            <span key={idx}>
-              <a href={url}>{recommendedlink}</a>
-              <br />
-            </span>
-          );
-        })}
-      </td>
-    </tr>
-  );
-}
 
 /**
  * Generate the RAI Certification document from the submission data.
@@ -116,6 +60,7 @@ export default function Certification({ dimension, results, questions, subDimens
   const subDimensionsToDisplay = subDimensions.filter(d => d.dimensionID === dimension.dimensionID);
   return (
     <>
+      <CertificationPdf />
       <DimensionHead dimension={dimension} questions={questions} results={results} />
       <div className="certification mt-3">
         <Table
@@ -150,9 +95,6 @@ export default function Certification({ dimension, results, questions, subDimens
             </tr>
           </thead>
           <tbody>
-            {/* {questions.map((question) => {
-              return displayQuestion(results[question?.name], question);
-            })} */}
             {subDimensionsToDisplay.length > 0 && subDimensionsToDisplay.map((sd, index) => (
               <tr key={index}>
                 <td>
