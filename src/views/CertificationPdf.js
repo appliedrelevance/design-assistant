@@ -1,19 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { usePDF, Page, Text, View, Document, StyleSheet, Svg, G, Polygon, Tspan, Rect } from '@react-pdf/renderer';
+import { Description, StarBorderOutlined } from '@material-ui/icons';
 
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: '#E4E4E4'
   },
-  section: {
-    margin: 10,
+  row: {
+    flexDirection: 'row',
+  },
+  name: {
+    margin: '20 20 0 20',
     padding: 10,
-    flexGrow: 1
-  }
+  },
+  title: {
+    margin: '20 50 0 20',
+    padding: '10 10 0 10',
+  },
+  titleStyle: {
+    fontWeight: 'bold',
+  },
+  description: {
+    margin: '0 20 0 20',
+    padding: '0 10 0 10',
+    width: '25%',
+  },
+  descriptionStyle: {
+    fontSize: 10,
+  },
+  subTitleStyle: {
+    fontSize: 14,
+  },
 });
 
 const MitigationLegend = () => (
@@ -248,24 +269,45 @@ const Tiger = () => (
 )
 
 
-// Create Document Component
-const CertificationReport = ({ dimension, results, questions, subDimensions, submission }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Risk</Text>
-      </View>
-      <View style={styles.section}>
-        <Text>Section #2</Text>
-      </View>
-      <View style={styles.section}><MitigationLegend /></View>
-    </Page>
-  </Document>
-);
-
-
 export const CertificationPdf = ({ dimension, results, questions, subDimensions, submission }) => {
-  const [instance, updateInstance] = usePDF({ document: <CertificationReport /> });
+  const [sb, setSb] = useState([]);
+  const [instance, updateInstance] = usePDF({
+    document:
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.row}>
+            <View style={styles.name}>
+              <Text style={styles.titleStyle}>{dimension.name}</Text>
+            </View>
+            <View style={styles.title}>
+              <Text style={styles.titleStyle}>Risk Scores</Text>
+            </View>
+            <View style={styles.title}>
+              <Text style={styles.titleStyle}>Mitigation Scores</Text>
+            </View>
+          </View>
+          <View style={styles.row}>
+            <View style={styles.description}>
+              <Text style={styles.descriptionStyle}>{dimension.description}</Text>
+            </View>
+          </View>
+          {sb.map((sb, index) => (
+            <View key={index} style={styles.row}>
+              <View style={styles.description}>
+                <Text style={styles.subTitleStyle}>{sb.name}</Text>
+              </View>
+              <View style={styles.description}>
+                <Text style={styles.descriptionStyle}>{StarBorderOutlined.description}</Text>
+              </View>
+            </View>
+          ))}
+        </Page>
+      </Document>
+  });
+  useEffect(() => {
+    setSb(subDimensions);
+    updateInstance();
+  }, [subDimensions]);
   if (instance.loading) return <div>Loading...</div>;
   if (instance.error) return <div>Error: {error}</div>
   return (

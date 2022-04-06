@@ -60,7 +60,10 @@ export default function Certification({ dimension, results, questions, subDimens
   const subDimensionsToDisplay = subDimensions.filter(d => d.dimensionID === dimension.dimensionID);
   return (
     <>
-      <CertificationPdf />
+      <CertificationPdf
+        dimension={dimension}
+        subDimensions={subDimensionsToDisplay}
+      />
       <DimensionHead dimension={dimension} questions={questions} results={results} />
       <div className="certification mt-3">
         <Table
