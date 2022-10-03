@@ -574,6 +574,7 @@ router.delete('/:questionId', async (req, res) => {
 });
 
 // TASK-TODO: Secure endpoint.
+// Update question
 router.put('/:questionId', async (req, res) => {
   try {
     req.body.questionType = req.body.questionType.toLowerCase();

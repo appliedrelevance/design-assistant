@@ -3,6 +3,7 @@ import '../css/admin.css';
 import ChildModal from './ChildModal';
 import React, { Component } from 'react';
 import Add from '@material-ui/icons/Add';
+import Sort from '@material-ui/icons/Sort';
 import Table from '@material-ui/core/Table';
 import QuestionModal from './QuestionModal';
 import TableRow from '@material-ui/core/TableRow';
@@ -11,7 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import QuestionRow from '../Components/QuestionRow';
 import IconButton from '@material-ui/core/IconButton';
-import { DropdownButton, Dropdown } from 'react-bootstrap';
+import { DropdownButton, Dropdown, Button } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const reorder = (list, startIndex, endIndex) => {
@@ -20,6 +21,7 @@ const reorder = (list, startIndex, endIndex) => {
   result.splice(endIndex, 0, removed);
   return result;
 };
+
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   // styles we need to apply on draggables
@@ -67,18 +69,34 @@ export default class QuestionTable extends Component {
     });
   }
 
+  async onRenumberQuestions() {
+    const { questions } = this.state;
+    console.log(`questions before renumber:`, questions?.map((q) => ({ questionNumber: q.questionNumber, question: q.question })));
+    const orderedQuestions = questions.map((question, index) => {
+      question.questionNumber = index + 1;
+      return question;
+    });
+    console.log(`questions after renumber:`, orderedQuestions);
+    // Write the renumbered questions to the database
+    orderedQuestions.map((question) => {
+      api.put('questions/' + question._id, question);
+    });
+  }
+
   async onDragEnd(result) {
     // dropped outside the list
     console.log(` DragEnd:`, result);
     if (!result.destination) {
       return;
     }
-
-    const questions = reorder(
+    console.log(`questions before reorder:`, this.state.questions?.map((q) => ({ questionNumber: q.questionNumber, question: q.question })));
+    const questions = renumberQuestions(
       this.state.questions,
       result.source.index,
       result.destination.index
     );
+    console.log(`questions after reorder:`, this.state.questions?.map((q) => ({ questionNumber: q.questionNumber, question: q.question })));
+
 
     if (result.destination.index !== 0) {
       this.setState({
@@ -100,6 +118,7 @@ export default class QuestionTable extends Component {
           });
         });
     }
+
   }
 
   addQuestion() {
@@ -245,17 +264,19 @@ export default class QuestionTable extends Component {
               previous_question={this.state.previousQuestion}
             />
           )}
-          <Table>
+          {/* <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <IconButton
+                  {/* <IconButton
                     aria-label="add question"
                     size="small"
                     onClick={() => this.addQuestion()}
                   >
                     <Add />
-                  </IconButton>
+                  </IconButton> 
+
+
                   <QuestionModal
                     show={this.state.modalShow}
                     onHide={this.handleCloseModal}
@@ -281,10 +302,12 @@ export default class QuestionTable extends Component {
                       .csv
                     </Dropdown.Item>
                   </DropdownButton>
+
                 </TableCell>
               </TableRow>
             </TableHead>
-          </Table>
+          </Table> */}
+
         </div>
       );
     }
@@ -311,6 +334,13 @@ export default class QuestionTable extends Component {
                   onClick={() => this.addQuestion()}
                 >
                   <Add />
+                </IconButton>
+                <IconButton
+                  aria-label="Renumber Questions"
+                  size="small"
+                  onClick={() => this.onRenumberQuestions()}
+                >
+                  <Sort />
                 </IconButton>
                 <QuestionModal
                   show={this.state.modalShow}

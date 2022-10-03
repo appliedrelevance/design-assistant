@@ -38,7 +38,7 @@ export default function QuestionRow(props) {
           </div>
         ) : null}
       </TableCell>
-      <TableCell className={classes.tablecell}>{index + 1}</TableCell>
+      <TableCell className={classes.tablecell}>{question.questionNumber}</TableCell>
       <TableCell className={classes.tablecell} component="th" scope="row">
         {question.question}
       </TableCell>
